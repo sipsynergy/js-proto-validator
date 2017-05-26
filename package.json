@@ -1,0 +1,30 @@
+{
+  "name": "@sipsynergy/proto-valid",
+  "version": "0.1.0",
+  "main": "dist/proto-valid.min.js",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/sipsynergy/js-proto-validator.git"
+  },
+  "bin": "parser/parser.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup --watch -c"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
+    "moment": "^2.18.1",
+    "proto-parse": "^0.0.3"
+  },
+  "devDependencies": {
+    "rollup": "^0.41.6",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  },
+  "peerDependencies": {
+    "whatwg-fetch": "^2.0.3"
+  }
+}

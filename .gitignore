@@ -1,0 +1,8 @@
+node_modules/
+.npm
+.yarn-integrity
+.env
+.idea
+*.DS_Store
+*.proto
+proto/
