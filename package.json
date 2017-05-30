@@ -1,10 +1,10 @@
 {
   "name": "@sipsynergy/proto-valid",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/proto-valid.min.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/sipsynergy/js-proto-validator.git"
+    "type": "git",
+    "url": "https://github.com/sipsynergy/js-proto-validator.git"
   },
   "bin": "parser/parser.js",
   "license": "MIT",
@@ -17,7 +17,9 @@
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "moment": "^2.18.1",
-    "proto-parse": "^0.0.3"
+    "proto-parse": "^0.0.3",
+    "rollup-watch": "^3.2.2",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "rollup": "^0.41.6",
