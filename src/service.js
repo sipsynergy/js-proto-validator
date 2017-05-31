@@ -18,7 +18,7 @@ export default function serviceProvider(path, rpcs, root, server) {
 			if (!param.verify(message)) {
 				throw new Error(`Invalid message in ${path}.${rpc.name}`);
 			}
-			return sendRequest(server, TypedService.__name, rpc.name, message).then(result => {
+			return sendRequest(server, TypedService.__name.toLowerCase(), rpc.name, message).then(result => {
 				let resultObj = resultType.create(result);
 				if (!resultType.verify(resultObj)) {
 					throw new Error(`Invalid response in ${path}.${rpc.name}`);
