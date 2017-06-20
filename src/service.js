@@ -1,7 +1,7 @@
 import each from './util/each';
 import sendRequest from './requests';
 
-export default function serviceProvider(path, rpcs, root, server) {
+export default function serviceProvider(path, rpcs, root, options) {
 
 	let TypedService = {};
 
@@ -18,7 +18,14 @@ export default function serviceProvider(path, rpcs, root, server) {
 			if (!param.verify(message)) {
 				throw new Error(`Invalid message in ${path}.${rpc.name}`);
 			}
-			return sendRequest(server, TypedService.__name.toLowerCase(), rpc.name, message).then(result => {
+			if (options.requestFn) {
+				return requestFn(TypedService.__type, rpc.name, message, param, resultType);
+			}
+
+			let droppedMainPackage = TypedService.__type.split('.');
+			droppedMainPackage.shift();
+
+			return sendRequest(options.server, droppedMainPackage, rpc.name, message).then(result => {
 				let resultObj = resultType.create(result);
 				if (!resultType.verify(resultObj)) {
 					throw new Error(`Invalid response in ${path}.${rpc.name}`);

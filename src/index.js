@@ -23,7 +23,7 @@ export default function protoProvider(json, options) {
 		if (definition.type === 'message') {
 			return loaded[path] = messageProvider(path, definition.content, opts);
 		} else {
-			return loaded[path] = serviceProvider(path, definition.content, root, opts.server);
+			return loaded[path] = serviceProvider(path, definition.content, root, opts);
 		}
 	}
 }
