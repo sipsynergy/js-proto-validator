@@ -1,11 +1,9 @@
-import 'whatwg-fetch';
-
 export default function sendRequest(server, service, rpc, message) {
 	let endpoint = server;
 	if (server[server.length - 1] !== '/') {
 		endpoint += '/';
 	}
-	endpoint += [service, rpc].join('/')
+	endpoint += service.concat(rpc).join('/')
 	return fetch(endpoint, {
 		method: 'POST',
 		headers: {

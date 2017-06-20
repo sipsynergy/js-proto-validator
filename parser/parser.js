@@ -9,6 +9,7 @@ const minimist = require('minimist');
 const stripComments = require('./util/parse').stripComments;
 const generate = require('./static/generate');
 const dynamic = require('./dynamic/generate');
+const wrapped = require('./wrapped/generate');
 const get = require('./util/read').get;
 
 const argv = minimist(process.argv.slice(2));
@@ -21,10 +22,16 @@ _.forEach(argv._, file => {
 });
 
 Promise.all(promises).then(result => {
-	if (!argv.method || argv.method === 'static') {
-		saveOutput(generate(_.map(fileData, f => f.data)));
-	} else if (argv.method === 'dynamic') {
-		saveOutput(JSON.stringify(dynamic.generate(_.map(fileData, f => f.data))));
+	let data = _.map(fileData, f => f.data);
+	switch (argv.method) {
+		case 'dynamic':
+			saveOutput(JSON.stringify(dynamic.generate(data)));
+			break;
+		case 'wrapped':
+			saveOutput(wrapped.generate(data));
+			break;
+		default:
+			saveOutput(generate(data));
 	}
 });
 

@@ -1,6 +1,23 @@
 import each from './util/each';
 import getDefault, { toObjectType, verify } from './type';
 
+/**
+ * A number, or a string containing a number.
+ * @typedef {Object} TypedMessage
+ * @property {string} __type
+ * @property {Function} create
+ * @property {Function} toObject
+ * @property {Function} verify
+ */
+
+/**
+ * Creates a message of the specified type.
+ *
+ * @param path
+ * @param fields
+ * @param options
+ * @returns {TypedMessage}
+ */
 export default function messageProvider(path, fields, options) {
 
 	let parameterMap = {};
@@ -19,7 +36,7 @@ export default function messageProvider(path, fields, options) {
 		});
 	}
 
-	TypedMessage.type = path;
+	TypedMessage.__type = path;
 	each(parameterMap, (type, name) => {
 		TypedMessage.prototype[name] = getDefault(type);
 	});
