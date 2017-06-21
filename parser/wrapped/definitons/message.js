@@ -21,14 +21,14 @@ const rawMessageTemplate = `
   * @function create
   * @constructs <%= name %>Message
   * @memberof <%= name %>#
-  * @params {<%= name %>Obj} params
+  * @param {<%= name %>Obj} params
   * @returns {<%= name %>Message}
   */
  
  /**
   * @function verify
   * @memberof <%= name %>#
-  * @params {Object} obj
+  * @param {Object} obj
   * @returns {boolean}
   */
  
