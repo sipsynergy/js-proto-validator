@@ -12,33 +12,43 @@ const rawServiceTemplate = `
  /**
   * @function <%- rpc.name %>
   * @memberof <%= name %>#
-  * @param {<%- rpc.message %>Message} message
-  * @returns {<%- rpc.returns %>Message}
+  * @param {<%- rpc.message %>} message
+  * @returns {<%- rpc.returns %>}
   */
  <% }); %>
  
    
   /** @var <%= name %> */
-  const <%= name %> = root('<%= path %>');
+  export const <%= name %> = root('<%= path %>');
   
 `;
 
 const _ = require('lodash');
-const pathToName = require('../util/pathToName')
 const serviceTemplate = _.template(rawServiceTemplate);
 
-function createServiceDefinition(serviceName, rpcs, path) {
+function createServiceDefinition(serviceObj, path) {
+	let module = path.split('.').pop();
 	return serviceTemplate({
-		name: pathToName(serviceName),
-		rpcs: _.map(rpcs, rpc => {
+		name: serviceObj.name,
+		rpcs: _.map(serviceObj.content, rpc => {
 			return {
-				name: pathToName(rpc.name),
-				message: pathToName(rpc.param),
-				returns: pathToName(rpc.returns)
+				name: rpc.name,
+				message: absolutePath(rpc.param, module),
+				returns: absolutePath(rpc.returns, module)
 			}
 		}),
-		path: path
+		parentPath: path,
+		module: module,
+		path: [path, serviceObj.name].join('.')
 	});
+}
+
+function absolutePath(name, module) {
+	if (name.indexOf('.') >= 0) {
+		let segments = name.split('.')
+		return `${segments.pop()}Message`
+	}
+	return `${name}Message`;
 }
 
 module.exports = createServiceDefinition;

@@ -1,11 +1,10 @@
-const pathToName = require('../util/pathToName');
 const rawMessageTemplate = `
 /**
  * A <%= name %> Message.
  * @class <%= name %>
  * @property {string} __type The type of the message.
  */
-  const <%= name %> = root('<%= path %>');
+  export const <%= name %> = root('<%= path %>');
  
  /**
  * @typedef {Object} <%= name %>Obj
@@ -20,21 +19,21 @@ const rawMessageTemplate = `
  /**
   * @function create
   * @constructs <%= name %>Message
-  * @memberof <%= name %>#
+  * @memberof <%= name %>
   * @param {<%= name %>Obj} params
   * @returns {<%= name %>Message}
   */
  
  /**
-  * @function verify
-  * @memberof <%= name %>#
+  * @function $verify
+  * @memberof <%= name %>
   * @param {Object} obj
   * @returns {boolean}
   */
  
  /**
   * @function toObject
-  * @memberof <%= name %>Message#
+  * @memberof <%= name %>Message
   * @returns {<%= name %>Obj}
   */
   
@@ -42,17 +41,20 @@ const rawMessageTemplate = `
 
 const _ = require('lodash');
 const messageTemplate = _.template(rawMessageTemplate);
+const protoToJSType = require('../util/types');
 
-function createMessageDefinition(messageName, params, path) {
+function createMessageDefinition(messageObj, path) {
 	return messageTemplate({
-		name: pathToName(messageName),
-		params: _.map(params, function(param) {
+		name: messageObj.name,
+		params: _.map(messageObj.content, function(param) {
 			return {
 				name: param.name,
-				type: pathToName(param.typename)
+				type: protoToJSType(param.typename)
 			}
 		}),
-		path: path
+		parentPath: path,
+		module: path.split('.').pop(),
+		path: [path, messageObj.name].join('.')
 	});
 }
 

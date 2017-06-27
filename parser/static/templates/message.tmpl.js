@@ -42,10 +42,10 @@ __pkg__.__name__ = (function() {
 
 	/**
 	 * Verifies a __name__ message.
-	 * @param {Object.<string,*>} message Plain object to verify
+	 * @param {Object.<string,*>} message Plain object to $verify
 	 * @returns {?string} `null` if valid, otherwise the reason why it is not
 	 */
-	__name__.verify = function verify(message) {
+	__name__.$verify = function verify(message) {
 		if (typeof message !== "object" || message === null)
 			return "object expected";
 //<% _.forEach(properties, function(property) { %>

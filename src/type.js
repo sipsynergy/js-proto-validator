@@ -14,10 +14,10 @@ export default function getDefault(type) {
 		case 'google.protobuf.Timestamp':
 			return new Date();
 	}
-	throw new Error(`Type ${type} not recognized`);
+	return null;
 }
 
-export function toObjectType(type, value) {
+export function toObjectType(type, value, root) {
 	if (stringTypes.indexOf(type) >= 0) {
 		return String(value);
 	}
@@ -30,10 +30,14 @@ export function toObjectType(type, value) {
 		case 'google.protobuf.Timestamp':
 			return (new Date(value)).getTime();
 	}
-	throw new Error(`Type ${type} not recognized`);
+	let rootType = root(type);
+	if (rootType.toObject && value.toObject) {
+		return value.toObject();
+	}
+	return value;
 }
 
-export function verify(type, value) {
+export function verify(type, value, root, namespace) {
 	if (stringTypes.indexOf(type) >= 0) {
 		return typeof value === 'string';
 	}
@@ -45,6 +49,10 @@ export function verify(type, value) {
 			return typeof value === 'boolean';
 		case 'google.protobuf.Timestamp':
 			return value instanceof Date;
+	}
+	let rootType = root([namespace, type].join('.'));
+	if (rootType.$verify) {
+		return rootType.$verify(value);
 	}
 	throw new Error(`Type ${type} not recognized`);
 }
