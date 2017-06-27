@@ -15,11 +15,11 @@ export default function serviceProvider(path, rpcs, root, options) {
 			resultType = root(getMessageName(rpc.returns, TypedService.__namespace));
 
 		TypedService[rpc.name] = function(message) {
-			if (!param.verify(message)) {
+			if (!param.$verify(message)) {
 				throw new Error(`Invalid message in ${path}.${rpc.name}`);
 			}
 			if (options.requestFn) {
-				return requestFn(TypedService.__type, rpc.name, message, param, resultType);
+				return options.requestFn(TypedService.__type, rpc.name, message, param, resultType);
 			}
 
 			let droppedMainPackage = TypedService.__type.split('.');
@@ -27,7 +27,7 @@ export default function serviceProvider(path, rpcs, root, options) {
 
 			return sendRequest(options.server, droppedMainPackage, rpc.name, message).then(result => {
 				let resultObj = resultType.create(result);
-				if (!resultType.verify(resultObj)) {
+				if (!resultType.$verify(resultObj)) {
 					throw new Error(`Invalid response in ${path}.${rpc.name}`);
 				}
 				return resultObj;

@@ -2,6 +2,7 @@ import get from './util/get';
 import merge from './util/merge';
 import messageProvider from './message';
 import serviceProvider from './service';
+import enumProvider from './enum';
 
 let defaultOptions = {
 	ignoreTypes: []
@@ -20,10 +21,14 @@ export default function protoProvider(json, options) {
 			throw new Error('Definition not found');
 		}
 
-		if (definition.type === 'message') {
-			return loaded[path] = messageProvider(path, definition.content, opts);
-		} else {
-			return loaded[path] = serviceProvider(path, definition.content, root, opts);
+		switch (definition.type) {
+			case 'message':
+				return loaded[path] = messageProvider(path, definition.content, root, opts);
+			case 'service':
+				return loaded[path] = serviceProvider(path, definition.content, root, opts);
+			case 'enum':
+				return enumProvider(path, definition.content);
 		}
+		throw new Error('Definition found but unrecognized');
 	}
 }

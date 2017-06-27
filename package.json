@@ -1,6 +1,6 @@
 {
   "name": "@sipsynergy/proto-valid",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "main": "dist/proto-valid.min.js",
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
     "watch": "rollup --watch -c"
   },
   "dependencies": {
+    "js-beautify": "^1.6.14",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "moment": "^2.18.1",
@@ -21,9 +22,9 @@
   },
   "devDependencies": {
     "rollup": "^0.41.6",
-    "rollup-watch": "^3.2.2",
     "rollup-plugin-buble": "^0.15.0",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "rollup-watch": "^3.2.2"
   },
   "optionalDependencies": {
     "whatwg-fetch": "^2.0.3"

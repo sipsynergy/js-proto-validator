@@ -28,7 +28,21 @@ Promise.all(promises).then(result => {
 			saveOutput(JSON.stringify(dynamic.generate(data)));
 			break;
 		case 'wrapped':
-			saveOutput(wrapped.generate(data));
+			let files = wrapped.generate(data);
+			_.forEach(files, file => {
+				if (file.content !== null) {
+					let dirPath = '.',
+						filename = 'index.js';
+
+					if (file.path) {
+						let pathSegments = file.path.split('.');
+						pathSegments.shift();
+						filename = pathSegments.pop() + '.js';
+						dirPath = './' + pathSegments.join('/');
+					}
+					saveTo(file.content, path.resolve(argv.o, dirPath, filename));
+				}
+			});
 			break;
 		default:
 			saveOutput(generate(data));
@@ -75,12 +89,21 @@ function getFileData(file) {
 
 function saveOutput(output) {
 	if (argv.o) {
-		fs.writeFile(argv.o, output, (err) => {
-			if (err) throw err;
-			console.log(`Saved ${argv.o}`);
-		});
+		saveTo(output, argv.o);
 	} else {
 		console.log(output);
 	}
+}
+
+function saveTo(output, filePath) {
+	let absolutePath = path.resolve(__dirname, filePath),
+		pathInfo = path.parse(absolutePath);
+
+	fs.mkdir(pathInfo.dir, () => {
+		fs.writeFile(absolutePath, output, (err) => {
+			if (err) console.error(err);
+			console.log(`Saved ${filePath}`);
+		})
+	});
 }
 
