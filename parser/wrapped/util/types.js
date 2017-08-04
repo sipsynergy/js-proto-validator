@@ -1,7 +1,4 @@
 function protoToJSType(typeName) {
-	if (typeName.indexOf('[]') >= 0) {
-		return 'Array';
-	}
 	switch(typeName) {
 		case 'string':
 		case 'double':

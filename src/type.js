@@ -38,6 +38,9 @@ export function toObjectType(type, value, root) {
 }
 
 export function verify(type, value, root, namespace) {
+	if (value instanceof Array ) {
+		return true;// TODO: Something more sophisticated here
+	}
 	if (stringTypes.indexOf(type) >= 0) {
 		return typeof value === 'string';
 	}
