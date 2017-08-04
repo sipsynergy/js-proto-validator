@@ -52,7 +52,7 @@ export default function messageProvider(path, fields, root, options) {
 		let obj = {};
 		each(parameterMap, (type, name) => {
 			if (this[name] !== null && this[name] !== getDefault(type)) {
-				obj[name] = toObjectType(type, this[name], root);
+				obj[name] = toObjectType(type, this[name], root, TypedMessage.__namespace);
 			}
 		});
 		return obj;

@@ -14,8 +14,9 @@ export default function serviceProvider(path, rpcs, root, options) {
 		let param = root(getMessageName(rpc.param, TypedService.__namespace)),
 			resultType = root(getMessageName(rpc.returns, TypedService.__namespace));
 
-		TypedService[rpc.name] = function(message) {
-			if (!param.$verify(message)) {
+		TypedService[rpc.name] = function(message, noVerify) {
+			let shouldVerify = noVerify !== undefined && !noVerify;
+			if (shouldVerify && !param.$verify(message)) {
 				throw new Error(`Invalid message in ${path}.${rpc.name}`);
 			}
 			if (options.requestFn) {
@@ -27,7 +28,7 @@ export default function serviceProvider(path, rpcs, root, options) {
 
 			return sendRequest(options.server, droppedMainPackage, rpc.name, message).then(result => {
 				let resultObj = resultType.create(result);
-				if (!resultType.$verify(resultObj)) {
+				if (shouldVerify && !resultType.$verify(resultObj)) {
 					throw new Error(`Invalid response in ${path}.${rpc.name}`);
 				}
 				return resultObj;
