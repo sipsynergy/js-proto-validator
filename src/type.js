@@ -17,7 +17,7 @@ export default function getDefault(type) {
 	return null;
 }
 
-export function toObjectType(type, value, root) {
+export function toObjectType(type, value, root, namespace) {
 	if (stringTypes.indexOf(type) >= 0) {
 		return String(value);
 	}
@@ -30,7 +30,12 @@ export function toObjectType(type, value, root) {
 		case 'google.protobuf.Timestamp':
 			return (new Date(value)).getTime();
 	}
-	let rootType = root(type);
+	let typeName = type;
+	if (type.indexOf('.') < 0) {
+		typeName = [namespace, type].join('.');
+	}
+	let rootType = root(typeName);
+
 	if (rootType.toObject && value.toObject) {
 		return value.toObject();
 	}
