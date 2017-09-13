@@ -64,7 +64,6 @@ function prepareMessage(message) {
 		type: 'message',
 		name: message.name,
 		content: _.map(read.get(message, 'field'), field => {
-			delete field.repeated;
 			delete field.fieldNo;
 			delete field.type;
 			return field;

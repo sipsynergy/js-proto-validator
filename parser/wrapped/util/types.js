@@ -5,7 +5,7 @@ function protoToJSType(typeName) {
 		case 'float':
 			return typeName
 		case 'bytes':
-			return 'string'
+			return 'int'
 		case 'int32':
 		case 'int64':
 		case 'uint32':

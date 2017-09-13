@@ -1,7 +1,13 @@
+import each from './util/each';
+
+const arrayTypes = ['bytes'];
 const stringTypes = ['string','bytes'];
 const numberTypes = ['double', 'float', 'int32', 'int64', 'uint32', 'uint64', 'sint32', 'sint64', 'fixed32', 'sfixed32', 'sfixed64'];
 
 export default function getDefault(type) {
+	if (type.repeated || arrayTypes.indexOf(type) >= 0) {
+		return [];
+	}
 	if (stringTypes.indexOf(type) >= 0) {
 		return '';
 	}
@@ -18,6 +24,18 @@ export default function getDefault(type) {
 }
 
 export function toObjectType(type, value, root, namespace) {
+	if (arrayTypes.indexOf(type) >= 0) {
+		return toObjectType({ typename: type, repeated: true });
+	}
+	if (type.repeated) {
+		let result = [];
+		if (value && value instanceof Array) {
+			each(value, val => {
+				result.push(toObjectType(type.typename, val, root, namespace));
+			});
+		}
+		return result;
+	}
 	if (stringTypes.indexOf(type) >= 0) {
 		return String(value);
 	}
@@ -43,8 +61,20 @@ export function toObjectType(type, value, root, namespace) {
 }
 
 export function verify(type, value, root, namespace) {
-	if (value instanceof Array ) {
-		return true;// TODO: Something more sophisticated here
+	if (arrayTypes.indexOf(type) >= 0) {
+		return verify({ typename: type, repeated: true });
+	}
+	if (type.repeated) {
+		if (value && value instanceof Array) {
+			let result = true;
+			each(value, val => {
+				if (!verify(type.typename, val, root, namespace)) {
+					result = false;
+				}
+			});
+			return result;
+		}
+		return false;
 	}
 	if (stringTypes.indexOf(type) >= 0) {
 		return typeof value === 'string';

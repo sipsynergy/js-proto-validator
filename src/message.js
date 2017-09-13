@@ -15,6 +15,7 @@ import getDefault, { toObjectType, verify } from './type';
  *
  * @param path
  * @param fields
+ * @param root
  * @param options
  * @returns {TypedMessage}
  */
@@ -24,7 +25,11 @@ export default function messageProvider(path, fields, root, options) {
 
 	each(fields, field => {
 		if (options.ignoreTypes.indexOf(field.typename) < 0) {
-			parameterMap[field.name] = field.typename;
+			if (field.repeated) {
+				parameterMap[field.name] = field;
+			} else {
+				parameterMap[field.name] = field.typename;
+			}
 		}
 	});
 
