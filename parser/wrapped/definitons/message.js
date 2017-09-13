@@ -8,12 +8,12 @@ const rawMessageTemplate = `
  
  /**
  * @typedef {Object} <%= name %>Obj
- <% _.forEach(params, function(param) { %> * @property {<%- param.type %>} <%- param.name %>\n<% }); %>
+ <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %>} <%- param.name %>\n<% }); %>
  */
   
  /**
  * @typedef {Object} <%= name %>Message
- <% _.forEach(params, function(param) { %> * @property {<%- param.type %>} <%- param.name %>\n<% }); %>
+ <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %>} <%- param.name %>\n<% }); %>
  */
  
  /**
@@ -49,7 +49,8 @@ function createMessageDefinition(messageObj, path) {
 		params: _.map(messageObj.content, function(param) {
 			return {
 				name: param.name,
-				type: protoToJSType(param.typename)
+				type: protoToJSType(param.typename),
+				repeated: param.repeated
 			}
 		}),
 		parentPath: path,

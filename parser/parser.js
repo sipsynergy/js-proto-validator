@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const parse = require('proto-parse');
+const parse = require('./proto').parse;
 const _ = require('lodash')
 const minimist = require('minimist');
 
@@ -50,6 +50,7 @@ Promise.all(promises).then(result => {
 });
 
 function getFileData(file) {
+
 	if (_.indexOf(handledFiles, file) >= 0) {
 		return new Promise((resolve) => {resolve()});
 	}

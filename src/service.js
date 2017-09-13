@@ -41,7 +41,16 @@ export default function serviceProvider(path, rpcs, root, options) {
 
 function getMessageName(name, namespace) {
 	if (name.indexOf('.') >= 0) {
-		return name;
+		let segments = namespace.split('.'),
+			options = [
+				name,
+				[namespace, name].join('.')
+			];
+		segments.pop();
+		segments.push(name);
+		options.push(segments.join('.'));
+
+		return options;
 	}
 
 	return [namespace, name].join('.');
