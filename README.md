@@ -1,30 +1,64 @@
 # js-proto-validator
 
-Parses a given proto file and produces a JSON file that can be used to send, receive and validate messages to a service.
+Parses a bundle of passed proto files and produces JS files that can be used to send, receive and validate messages to a service.
 
-## Parsing a proto file
+## Parsing proto files
 
 ````
-node ./parser/parser.js ./proto/feedback.proto --method=dynamic --o=feedback.json
+./parser/parser.js ./proto/proto/* --method=wrapped -o=./output/
 ````
 
-All passed files will be parsed and added to the output json file.
+All passed files will be parsed and generate js files in the output folder. The above command can be run with the 
+shortcut `npm run default`
 
-## Sending messages
+## Setup
+
+All the proto files should be processed at the same time. Place a `config.js` in the same folder as the 
+generated code.
 
 ````js
-import protoProvider from '@sipsynergy/proto-valid'
+import http from '../api';
 
-let feedbackService = protoProvider(jsonString, {server: 'http://0.0.0.0:8080/service/endpoint', ignoreTypes: ['google.protobuf.Timestamp']})
-	
-let Service = feedbackService('sipsynergy.pkg.Service')
-let Message = feedbackService('sipsynergy.pkg.Message')
+let config = {
+	baseUrl: '<baseURl>'	
+};
 
-let message = Message.create({
-	referenceID: id
-})
+// Set global options here
+const options = {
+	requestFn: function (path, rpc, message, requestType, responseType) {
+		// Build the request based on the passed information and return it in a way you'd like to receive it back
 
-Service.RpcName(message)
+		return http.request({
+			method: 'post',
+			baseURL: config.baseUrl,
+			url: '',
+			data: message.toObject(), // The actual message, toObject turns it into a basic JS Object
+		}).then(result => {
+			
+			// requestType and responseType can be used to validate messages
+			
+			return responseType.create(result.data);
+		});
+	},
+};
+
 ````
 
-Service Rpc calls will return a promise with the returned value. Service and message definitions are retrieved via the initialized provider.
+## Usage
+
+After set up you can import specific message types and services from the generated files. Services will expect
+messages that were created by message types
+
+````js
+import { Service, Request } from '../proto/platform_company'
+
+
+let message = Request.create({
+    field: '<fieldValue>'
+});
+
+Service.SendRequest(message).then(result => {
+	console.log(result);
+});
+
+````
