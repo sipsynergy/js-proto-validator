@@ -61,7 +61,7 @@ function getFileData(file) {
 				return;
 			}
 
-			let protoDefinition = stripComments(data);
+			let protoDefinition = data;//stripComments(data);
 
 			const parsedData = parse(protoDefinition);
 			const base = path.dirname(file);

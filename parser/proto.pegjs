@@ -5,7 +5,8 @@ proto = ws? a:syntax b:(import / package / option / emptyStatement / message / e
 	return arr;
 }
 
-comment = "//" [ A-Za-z0-9._-]* ("\n" / "\r\n")
+//comment = "//" ([ A-Za-z0-9._\-~\?,\/:\"\'\(\)=><;] / '{' / '}')* ("\n" / "\r\n")
+comment = "//" [^\n]* ("\n" / "\r\n")
 {}
 rws = [ \r\n\t]+ / comment // Real white space
 {}
@@ -27,6 +28,22 @@ oneofName = ident
 mapName = ident
 serviceName = ident
 rpcName = ident
+
+tag = [ ]* a:letter+ [ ]* ":" [ ]* '"' b:([^"])+ '"' [ ]*
+{
+	return {
+		tag: a.join(''),
+		content: b.join('')
+	}
+}
+injectTag = "//" [ ]+ "@inject_tag:" [ ]+ a:tag+ ws?
+{
+	var result = {};
+	for (var i = 0; i < a.length; i++) {
+		result[a[0].tag] = a[0].content;
+	}
+	return result;
+}
 
 messageType = a:"."? b:(ident ".")* c:messageName
 { return (a == '.' ? '.' : '')+b.map(function(a){return a.join('')}).join('')+c }
@@ -90,7 +107,7 @@ fieldOptionsParam = "[" ws? a:fieldOptions ws? "]"
 	return opts;
 }
 
-field = a:"repeated"? ws? b:type ws? c:fieldName ws? "=" ws? d:fieldNumber ws? e:(fieldOptionsParam)? ws? ";"
+field = g:injectTag? a:"repeated"? ws? b:type ws? c:fieldName ws? "=" ws? d:fieldNumber ws? e:(fieldOptionsParam)? ws? f:(comment)? ws? ";"
 {
 	return {
       type: "field",
@@ -98,7 +115,9 @@ field = a:"repeated"? ws? b:type ws? c:fieldName ws? "=" ws? d:fieldNumber ws? e
       typename: b,
       name: c,
       fieldNo: d,
-      opts: e == null ? {} : e
+      opts: e == null ? {} : e,
+      comments: f,
+      tags: g == null ? {} : g
 	}
 }
 fieldOptions = a:fieldOption ws? b:("," ws? fieldOption ws?)*
