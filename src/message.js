@@ -25,11 +25,7 @@ export default function messageProvider(path, fields, root, options) {
 
 	each(fields, field => {
 		if (options.ignoreTypes.indexOf(field.typename) < 0) {
-			if (field.repeated) {
-				parameterMap[field.name] = field;
-			} else {
-				parameterMap[field.name] = field.typename;
-			}
+			parameterMap[field.name] = field;
 		}
 	});
 
@@ -56,7 +52,7 @@ export default function messageProvider(path, fields, root, options) {
 	TypedMessage.prototype.toObject = function() {
 		let obj = {};
 		each(parameterMap, (type, name) => {
-			if (this[name] !== null && this[name] !== getDefault(type)) {
+			if (this[name] !== null && this[name] !== undefined && this[name] !== getDefault(type)) {
 				obj[name] = toObjectType(type, this[name], root, TypedMessage.__namespace);
 			}
 		});

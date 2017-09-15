@@ -8,12 +8,12 @@ const rawMessageTemplate = `
  
  /**
  * @typedef {Object} <%= name %>Obj
- <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %>} <%- param.name %>\n<% }); %>
+ <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %><%- param.required ? '' : '|null|undefined' %>} <%- param.name %>\n<% }); %>
  */
   
  /**
  * @typedef {Object} <%= name %>Message
- <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %>} <%- param.name %>\n<% }); %>
+ <% _.forEach(params, function(param) { %> * @property {<%- param.type %><%- param.repeated ? '[]' : '' %><%- param.required ? '' : '|null|undefined' %>} <%- param.name %>\n<% }); %>
  */
  
  /**
@@ -47,10 +47,19 @@ function createMessageDefinition(messageObj, path) {
 	return messageTemplate({
 		name: messageObj.name,
 		params: _.map(messageObj.content, function(param) {
+			let required = false,
+				validation = [];
+
+			if (param.tags.valid) {
+				validation = param.tags.valid.split(',');
+				required = validation.indexOf('required') >= 0;
+			}
 			return {
 				name: param.name,
 				type: protoToJSType(param.typename),
-				repeated: param.repeated
+				repeated: param.repeated,
+				required: required,
+				validation: validation
 			}
 		}),
 		parentPath: path,

@@ -8,13 +8,13 @@ export default function getDefault(type) {
 	if (type.repeated || arrayTypes.indexOf(type) >= 0) {
 		return [];
 	}
-	if (stringTypes.indexOf(type) >= 0) {
+	if (stringTypes.indexOf(type.typename) >= 0) {
 		return '';
 	}
-	if (numberTypes.indexOf(type) >= 0) {
+	if (numberTypes.indexOf(type.typename) >= 0) {
 		return 0;
 	}
-	switch (type) {
+	switch (type.typename) {
 		case 'bool':
 			return false;
 		case 'google.protobuf.Timestamp':
@@ -36,21 +36,21 @@ export function toObjectType(type, value, root, namespace) {
 		}
 		return result;
 	}
-	if (stringTypes.indexOf(type) >= 0) {
+	if (stringTypes.indexOf(type.typename) >= 0) {
 		return String(value);
 	}
-	if (numberTypes.indexOf(type) >= 0) {
+	if (numberTypes.indexOf(type.typename) >= 0) {
 		return parseFloat(value);
 	}
-	switch (type) {
+	switch (type.typename) {
 		case 'bool':
 			return Boolean(value);
 		case 'google.protobuf.Timestamp':
 			return (new Date(value)).getTime();
 	}
-	let typeName = type;
+	let typeName = type.typename;
 	if (type.indexOf('.') < 0) {
-		typeName = [namespace, type].join('.');
+		typeName = [namespace, type.typename].join('.');
 	}
 	let rootType = root(typeName);
 
@@ -61,14 +61,17 @@ export function toObjectType(type, value, root, namespace) {
 }
 
 export function verify(type, value, root, namespace) {
+	if (!type.required) {
+		return true;
+	}
 	if (arrayTypes.indexOf(type) >= 0) {
-		return verify({ typename: type, repeated: true });
+		type.repeated = true;
 	}
 	if (type.repeated) {
 		if (value && value instanceof Array) {
 			let result = true;
 			each(value, val => {
-				if (!verify(type.typename, val, root, namespace)) {
+				if (!verify(type, val, root, namespace)) {
 					result = false;
 				}
 			});
@@ -76,21 +79,21 @@ export function verify(type, value, root, namespace) {
 		}
 		return false;
 	}
-	if (stringTypes.indexOf(type) >= 0) {
+	if (stringTypes.indexOf(type.typename) >= 0) {
 		return typeof value === 'string';
 	}
-	if (numberTypes.indexOf(type) >= 0) {
+	if (numberTypes.indexOf(type.typename) >= 0) {
 		return typeof value === 'number';
 	}
-	switch (type) {
+	switch (type.typename) {
 		case 'bool':
 			return typeof value === 'boolean';
 		case 'google.protobuf.Timestamp':
 			return value instanceof Date;
 	}
-	let rootType = root([namespace, type].join('.'));
+	let rootType = root([namespace, type.typename].join('.'));
 	if (rootType.$verify) {
 		return rootType.$verify(value);
 	}
-	throw new Error(`Type ${type} not recognized`);
+	throw new Error(`Type ${type.typename} not recognized`);
 }
