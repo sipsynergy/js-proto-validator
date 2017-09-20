@@ -53,7 +53,7 @@ export function toObjectType(type, value, root, namespace) {
 			return (new Date(value)).getTime();
 	}
 	let typeName = type.typename;
-	if (type.indexOf('.') < 0) {
+	if (type.typename.indexOf('.') < 0) {
 		typeName = [namespace, type.typename].join('.');
 	}
 	let rootType = root(typeName);
