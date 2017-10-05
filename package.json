@@ -1,6 +1,6 @@
 {
   "name": "@sipsynergy/proto-valid",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "main": "dist/proto-valid.min.js",
   "repository": {
     "type": "git",
