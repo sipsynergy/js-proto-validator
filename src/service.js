@@ -34,6 +34,8 @@ export default function serviceProvider(path, rpcs, root, options) {
 				return resultObj;
 			});
 		};
+
+		TypedService[rpc.name].__name = rpc.name;
 	});
 
 	return TypedService;
