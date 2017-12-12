@@ -18,9 +18,9 @@ function generate(data) {
 
 	_.forEach(data, d => {
 		let pkg = read.getPackage(d),
-			messages = read.get(d, 'message'),
+			messages = read.get(d, 'message', true),
 			services = read.get(d, 'service'),
-			enums = read.get(d, 'enum');
+			enums = read.get(d, 'enum', true);
 
 		ensurePackage(pkg, root);
 
