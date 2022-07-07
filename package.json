@@ -19,7 +19,7 @@
     "js-beautify": "^1.6.14",
     "lodash": "^4.17.19",
     "minimist": "^1.2.0",
-    "moment": "^2.18.1"
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "pegjs": "^0.10.0",
